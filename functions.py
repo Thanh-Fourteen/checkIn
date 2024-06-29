@@ -3,10 +3,11 @@ import logging
 logging.disable(logging.CRITICAL)
 import warnings
 warnings.filterwarnings("ignore")
+import torch
+torch.cuda.empty_cache()
 
 import cv2
 import csv
-import torch
 import torchvision.transforms.functional as F
 from facetorch import FaceAnalyzer
 from omegaconf import OmegaConf
@@ -23,10 +24,10 @@ class functions():
         Args:
             folder (str): Path to the folder containing data files, such as names.csv and features_database.pt.
         """
-        path_config = "gpu.config.yml"
+        # path_config = os.path.join(folder, "gpu.config.yml")
         self.folder = folder
-        self.path_config = "gpu.config.yml"
-        self.cfg = OmegaConf.load(path_config)
+        self.path_config = os.path.join(folder, "gpu.config.yml")
+        self.cfg = OmegaConf.load(self.path_config)
         self.analyzer = FaceAnalyzer(self.cfg.analyzer)
         self.name_path = os.path.join(folder, "names.csv")
         self.database_path = os.path.join(folder, "features_database.pt")
