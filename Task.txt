@@ -1,0 +1,15 @@
+Các phần chưa làm
+1. Vấn đề đang gặp phải
+    - Chạy lâu lâu đang bị đứng
+    - 2 người vào khung hình cũng bị đứng
+
+2. Các vấn đề chưa làm
+    - Buil ui cho đẹp
+    - Test với ảnh trắng đen
+    - Test model chạy 30 -> 40 người
+    - Test chạy 3 tiếng
+
+3. Option
+    - Cải thiện model cho chạy nhanh hơn 
+    - Thêm nút check in (option)
+    - Detect nhiều người

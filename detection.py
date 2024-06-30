@@ -16,10 +16,10 @@ import pandas as pd
 import imageio
 
 
-class functions():
+class faceDetection():
     def __init__(self, folder):
         """
-        Initializes the `functions` class with necessary parameters.
+        Initializes the `faceDetection` class with necessary parameters.
 
         Args:
             folder (str): Path to the folder containing data files, such as names.csv and features_database.pt.
@@ -190,7 +190,7 @@ class functions():
 
 if __name__ == "__main__":
     folder = "D:\\FPT\\AI\\9.5 AI\\Check In\\Final1"
-    f = functions(folder)
+    f = faceDetection(folder)
     f.warmup()
     # directory = os.path.join(folder, 'img')
     # f.process_images_from_directory(directory)

@@ -1,4 +1,4 @@
-from functions import functions
+from Final1.detection import functions
 import os
 
 if __name__ == "__main__":

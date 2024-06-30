@@ -71,6 +71,19 @@
     <string>Break</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="warmup">
+   <property name="geometry">
+    <rect>
+     <x>32</x>
+     <y>438</y>
+     <width>131</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Warm up</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

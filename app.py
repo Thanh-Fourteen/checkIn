@@ -8,19 +8,20 @@ from PyQt6.QtGui import QImage, QPixmap
 from PyQt6.QtWidgets import QDialog, QApplication
 from PyQt6.uic import loadUi
 from PyQt6.QtCore import Qt
-from functions import functions
+from detection import faceDetection
 import imageio
 
 folder = "D:\\FPT\\AI\\9.5 AI\\Check In\\Final1"
-f = functions(folder)
-f.warmup()
+detect = faceDetection(folder)
+detect.warmup()
 
 class tehSeencode(QDialog):
     def __init__(self):
         super(tehSeencode, self).__init__()
         ui_path = os.path.join(folder, 'form.ui')
         loadUi(ui_path, self)
-        self.SHOW.clicked.connect(self.onClicked)
+        self.thread = {}
+        self.SHOW.clicked.connect(self.camera)
         self.TEXT.setText('Findly Press')
         self.Break.clicked.connect(self.breakClicked)
         self.cap = None
@@ -50,7 +51,7 @@ class tehSeencode(QDialog):
                 continue
 
             imageio.imwrite(img_path, frame)
-            name, acc = f.predict_name(img_path)
+            name, acc = detect.predict_name(img_path)
             if acc >= threshold:
                 self.TEXT.setText(f"Name: {name} with acc {acc:.2f}")
                 # print(f"Best match: {name} with similarity {acc:.2f}")
@@ -82,7 +83,7 @@ class tehSeencode(QDialog):
 if __name__ == "__main__":
 
     # img_path = os.path.join(folder, "my_image.png")
-    # f.Recognition(img_path)
+    # detect.Recognition(img_path)
     # print("Done!")
 
     app = QApplication(sys.argv)
