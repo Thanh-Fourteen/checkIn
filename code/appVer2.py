@@ -3,13 +3,26 @@ import sys
 import os
 import cv2
 from PyQt6 import QtCore
-from PyQt6.QtCore import Qt, pyqtSlot
+from PyQt6.QtCore import Qt, pyqtSlot, QThreadPool, QRunnable, QObject
 from PyQt6.QtGui import QImage, QPixmap
 from PyQt6.QtWidgets import QDialog, QApplication
 from PyQt6.uic import loadUi
 from detection import faceDetection
 import imageio
 import threading
+
+class WarmupTaskSignals(QObject):
+    finished = QtCore.pyqtSignal()  # Tạo tín hiệu thông báo khi khởi động hoàn tất
+
+class WarmupTask(QRunnable):
+    def __init__(self, detect):
+        super(WarmupTask, self).__init__()
+        self.detect = detect
+        self.signals = WarmupTaskSignals()  # Tạo instance của lớp tín hiệu
+
+    def run(self):
+        self.detect.warmup()
+        self.signals.finished.emit()  # Phát tín hiệu khi khởi động hoàn tất
 
 class ThreadClass(QtCore.QThread):
     """
@@ -28,20 +41,20 @@ class ThreadClass(QtCore.QThread):
         threshold (float, optional): Confidence threshold for face recognition. Defaults to 0.5.
     """
     signal_update_text = QtCore.pyqtSignal(str)
+    signal_update_button = QtCore.pyqtSignal(bool)
 
-    def __init__(self, folder, detect, parent=None, skip_frame_first = 30, frame_skip = 30, threshold = 0.5):
+    def __init__(self, folder, detect, mutex, parent=None, skip_frame_first = 30, frame_skip = 30, threshold = 0.5):
         super(ThreadClass, self).__init__(parent)
         self.folder = folder
         self.detect = detect
         self.running = True
-        self.img_path = os.path.join(self.folder, "my_image.png")
+        self.img_path = os.path.join(self.folder,"img_temp", "my_image.png")
+        self.mutex = mutex
 
         self.skip_frame_first = skip_frame_first
         self.frame_skip = frame_skip
         self.threshold = threshold
 
-        self.mutex = threading.Lock() 
-        
 
     def run(self):
         """
@@ -53,12 +66,11 @@ class ThreadClass(QtCore.QThread):
         self.running = True
         frame_count = 0
         while self.running:
-            with self.mutex:
-                if self.cap is not None:  # Kiểm tra self.cap khác None trước khi sử dụng
-                    ret, frame = self.cap.read()
-                else:
-                    ret = False
-                    frame = None
+            if self.cap is not None:  # Kiểm tra self.cap khác None trước khi sử dụng
+                ret, frame = self.cap.read()
+            else:
+                ret = False
+                frame = None
             
             if not ret:
                 break
@@ -69,14 +81,20 @@ class ThreadClass(QtCore.QThread):
             frame_count += 1
             if (frame_count < self.skip_frame_first) or (frame_count % self.frame_skip != 0):
                 continue
-
-            imageio.imwrite(self.img_path, frame)
-            name, acc = self.detect.predict_name(self.img_path)
-            if acc >= self.threshold:
-                self.signal_update_text.emit(f"Name: {name} with acc {acc:.2f}")
-            else:
-                self.signal_update_text.emit("No match found.")
-            print(f"frame count: {frame_count}")
+            
+            with self.mutex:
+                self.signal_update_button.emit(False)
+                imageio.imwrite(self.img_path, frame)
+                print(f"\n\nRecognizing with frame {frame_count}")
+                name, acc = self.detect.predict_name(self.img_path)
+                if acc >= self.threshold:
+                    self.signal_update_text.emit(f"Name: {name} with acc {acc:.2f}")
+                elif (name == "notFound"):
+                    self.signal_update_text.emit("No faces detected in the camera.")
+                else:
+                    self.signal_update_text.emit("No match found.")
+                self.signal_update_button.emit(True) 
+                print(f"Recognize completed with frame {frame_count}")
     
 
 
@@ -92,9 +110,10 @@ class tehSeencode(QDialog):
         frame_skip (int, optional): Number of frames to skip between detections. Defaults to 30.
         threshold (float, optional): Confidence threshold for face recognition. Defaults to 0.5.
     """
+    signal_update_buttons = QtCore.pyqtSignal(bool)
     def __init__(self, folder, parent=None, skip_frame_first=30, frame_skip=30, threshold=0.5):
         super(tehSeencode, self).__init__(parent)
-        ui_path = os.path.join(folder, 'form.ui')
+        ui_path = os.path.join(folder,"UI", 'form.ui')
         loadUi(ui_path, self)
         self.folder = folder
         self.detect = faceDetection(self.folder)
@@ -105,18 +124,33 @@ class tehSeencode(QDialog):
         self.warmup.clicked.connect(self.WarmUp)
 
         self.cap = None
+        self.thread_pool = QThreadPool()
+        self.signal_update_buttons.connect(self.update_buttons)
+        self.warmup_active = False
         self.WarmUp()
+        
         self.running = True
-        self.thread = ThreadClass(self.folder, self.detect, parent, skip_frame_first, frame_skip, threshold)
+        self.mutex = threading.Lock()
+        self.thread = ThreadClass(self.folder, self.detect, self.mutex, parent, skip_frame_first, frame_skip, threshold)
+
+        self.thread.signal_update_text.connect(self.update_text)
+        self.thread.signal_update_button.connect(self.update_button_state)
+        self.predicting = False
 
     def WarmUp(self):
-        """
-        Warms up the face detection model.
+        self.signal_update_buttons.emit(False)
+        self.TEXT.setText("Warming up...")
+        self.warmup_active = True
 
-        This method is called to prepare the face detection model for use.
-        """
-        if (self.cap == None):
-            self.detect.warmup()
+        def warmup_finished():
+            self.signal_update_buttons.emit(True)
+            self.TEXT.setText("Warmup complete!")
+            self.warmup_active = False
+
+        warmup_task = WarmupTask(self.detect)
+        warmup_task.signals.finished.connect(warmup_finished)  # Kết nối tín hiệu finished với khe cắm warmup_finished
+        self.thread_pool.start(warmup_task)
+         
 
     @pyqtSlot()
     def onClicked(self):
@@ -128,11 +162,11 @@ class tehSeencode(QDialog):
         """
         print("Button show click!")
         self.TEXT.setText("Camera starting...")
-
+        self.warmup.setEnabled(False)
         self.cap = cv2.VideoCapture(0)
 
         # Tạo và kết nối luồng xử lý nhận diện
-        self.thread.cap = self.cap 
+        self.thread.cap = self.cap
         self.thread.signal_update_text.connect(self.update_text)
         self.thread.start()
 
@@ -153,16 +187,29 @@ class tehSeencode(QDialog):
 
         Stops the camera, terminates the face detection thread, and releases resources.
         """
-        self.TEXT.setText("Don't Click any button!")
-        if self.cap != None:
-            with self.thread.mutex:
+        if not self.predicting:
+            self.TEXT.setText("Don't Click any button!")
+            if self.cap != None:
                 self.thread.running = False
-            self.thread.wait() # Đợi luồng kết thúc
+                self.thread.wait() # Đợi luồng kết thúc
 
-            self.cap.release()
-            cv2.destroyAllWindows()
-        self.TEXT.setText("Camera stopped")
-        self.cap = None
+                self.cap.release()
+                cv2.destroyAllWindows()
+            self.TEXT.setText("Camera stopped")
+            self.cap = None
+            self.warmup.setEnabled(True)
+
+    def update_button_state(self, enabled):
+        """
+        Cập nhật trạng thái của nút Break.
+        """
+        self.Break.setEnabled(enabled)
+        self.predicting = not enabled
+
+    @pyqtSlot(bool)
+    def update_buttons(self, enabled):
+        self.SHOW.setEnabled(enabled)
+        self.Break.setEnabled(enabled)
 
     def update_text(self, text):
         """
@@ -172,7 +219,7 @@ class tehSeencode(QDialog):
             text (str): The text to display.
         """
         self.TEXT.setText(text)
-
+    
     def displayImage(self, img):
         """
         Displays an image in the UI's image label.
@@ -191,6 +238,19 @@ class tehSeencode(QDialog):
         img = img.rgbSwapped()
         self.imgLabel.setPixmap(QPixmap.fromImage(img))
         self.imgLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+    
+    def closeEvent(self, event):
+        """
+        Xử lý sự kiện đóng ứng dụng.
+        """
+        if self.predicting or self.warmup_active:
+            # Nếu predict_name đang chạy, chặn sự kiện đóng và thông báo cho người dùng
+            event.ignore()
+            self.TEXT.setText("Chương trình đang xử lý, hãy thử lại sau...")
+        else:
+            # Nếu predict_name đã hoàn thành, cho phép đóng ứng dụng
+            self.breakClicked()
+            event.accept()
 
 if __name__ == "__main__":
     folder = "D:\\FPT\\AI\\9.5 AI\\Check In\\Final1"

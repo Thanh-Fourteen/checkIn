@@ -7,7 +7,6 @@ import torch
 torch.cuda.empty_cache()
 
 import cv2
-import csv
 import torchvision.transforms.functional as F
 from facetorch import FaceAnalyzer
 from omegaconf import OmegaConf
@@ -24,13 +23,12 @@ class faceDetection():
         Args:
             folder (str): Path to the folder containing data files, such as names.csv and features_database.pt.
         """
-        # path_config = os.path.join(folder, "gpu.config.yml")
         self.folder = folder
-        self.path_config = os.path.join(folder, "gpu.config.yml")
+        self.path_config = os.path.join(folder,"data", "gpu.config.yml")
         self.cfg = OmegaConf.load(self.path_config)
         self.analyzer = FaceAnalyzer(self.cfg.analyzer)
-        self.name_path = os.path.join(folder, "names.csv")
-        self.database_path = os.path.join(folder, "features_database.pt")
+        self.name_path = os.path.join(folder,"data", "names.csv")
+        self.database_path = os.path.join(folder,"data", "features_database.pt")
 
     def warmup(self):
         """
@@ -38,7 +36,8 @@ class faceDetection():
         This helps to initialize the model and improve subsequent performance.
         """
         print("Warming up!")
-        path_img_input=os.path.join(self.folder, "BinhThuongThanh.jpg")
+        path_img_input = os.path.join(self.folder,"img_temp", "persons.jpg")
+        path_img_input_2 =  os.path.join(self.folder,"img_temp", "BinhThuongThanh.jpg")
         # warmup
         response = self.analyzer.run(
                 path_image=path_img_input,
@@ -48,6 +47,7 @@ class faceDetection():
                 include_tensors=True
             )
         self.predict_name(path_img_input)
+        self.predict_name(path_img_input_2)
         print("Warmup done!")
         
     def analyze_image(self, image_path):
@@ -142,11 +142,13 @@ class faceDetection():
         features = torch.load(self.database_path)
         features = features.T
 
+        print("Analyzing")
         response = self.analyze_image(image_path)
         if len(response.faces) == 0:
-            print("No faces detected in the input image.")
-            return None, 0.0
+            return "notFound", 0.0
 
+        print('Analysis completed')
+        print(f"Number of face: {len(response.faces)}")
         feature = response.faces[0].preds['verify'].logits
         feature.unsqueeze_(0)
 
@@ -192,9 +194,9 @@ if __name__ == "__main__":
     folder = "D:\\FPT\\AI\\9.5 AI\\Check In\\Final1"
     f = faceDetection(folder)
     f.warmup()
-    # directory = os.path.join(folder, 'img')
+    # directory = os.path.join(folder, 'img_database')
     # f.process_images_from_directory(directory)
 
-    img_path = os.path.join(folder, "my_image.png")
+    img_path = os.path.join(folder,"img_temp", "my_image.png")
     f.Recognition(img_path)
     print("done")
