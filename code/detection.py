@@ -79,9 +79,14 @@ class faceDetection():
         features_tensor = torch.tensor([]).to("cuda")
         name = []
         for filename in os.listdir(directory):
+            print(f"{filename}")
             if filename.lower().endswith(('.png', '.jpg', '.jpeg')):
                 img_path = os.path.join(directory, filename)
-                response = self.analyze_image(img_path)
+                try:
+                    response = self.analyze_image(img_path)
+                except:
+                    print(f"Don't analysis {filename}")
+                    continue
                 
                 if len(response.faces) == 0:
                     print(f"No faces detected in the image {img_path}.")
@@ -90,6 +95,7 @@ class faceDetection():
                 features = response.faces[0].preds['verify'].logits.unsqueeze(0)
                 name.append(filename)
                 features_tensor = torch.concat((features_tensor, features), dim = 0)
+            print(f"Done {filename}")
 
         torch.save(features_tensor, self.database_path)  
         df = pd.DataFrame({'name': name})
@@ -194,9 +200,9 @@ if __name__ == "__main__":
     folder = "D:\\FPT\\AI\\9.5 AI\\Check In\\Final1"
     f = faceDetection(folder)
     f.warmup()
-    # directory = os.path.join(folder, 'img_database')
-    # f.process_images_from_directory(directory)
+    directory = os.path.join(folder, 'img_database')
+    f.process_images_from_directory(directory)
 
-    img_path = os.path.join(folder,"img_temp", "my_image.png")
-    f.Recognition(img_path)
+    # img_path = os.path.join(folder,"img_temp", "my_image.png")
+    # f.Recognition(img_path)
     print("done")
