@@ -5,6 +5,8 @@ Các phần chưa làm
     - Trong lúc đang detect nếu mình tắt chương trình thì nó vẫn hoạt động                              (đã fix)
     - Trong lúc đang detect or warmup không được break, warmup                                          (đã fix)
     - Trong lúc nhấn warmup không được nhấn show hoặc break                                             (đã fix)
+    - Đang warmup nhấn thêm warmup nữa là bị lỗi                                                        (đã fix)
+    - Đang show nhấn tiếp show bị cảnh báo, và có thể gây ra lỗi                                        (chưa fix)
     - Warmup hơi Lâu                                                                                    (Chưa fix)
     - Lâu lâu mô hình analyze lại chạy vài giây có khi tới 1'                                           (chưa fix)
     - Nhiều mặt trong 1 khung camera, model sẽ không biết mặt nào cần detect                            (chưa fix)
@@ -13,11 +15,12 @@ Các phần chưa làm
 2. Các vấn đề chưa làm
     - Buil ui cho đẹp
     - Khởi tạo màn hình khởi động (Lúc mới mở chương trình thì show màn hình này, khởi động xong chương trình sẽ hiện Ui detect)
-    - Test với ảnh trắng đen
+    - Thử xử lý với ảnh trắng đen
+    - Test chạy 3 tiếng
+    - Test nhiều trường hợp khác nhau (nhiều người, ánh sáng, nhiễu,....)
     - Test model chạy 30 -> 40 người                                                                    (Đã test)
         -> 30 hay 40 vẫn dự đoán nhanh. Quan trọng analyze phân tích nhanh hay chậm thôi
-    - Test chạy 3 tiếng
-    - Test thử đang warmup nhấn tiếp warmup
+    
 
 3. Option
     - Cải thiện model cho chạy nhanh hơn 

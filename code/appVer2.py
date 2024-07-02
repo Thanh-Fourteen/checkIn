@@ -54,6 +54,7 @@ class ThreadClass(QtCore.QThread):
         self.skip_frame_first = skip_frame_first
         self.frame_skip = frame_skip
         self.threshold = threshold
+        self.cap = None
 
 
     def run(self):
@@ -127,7 +128,6 @@ class tehSeencode(QDialog):
         self.thread_pool = QThreadPool()
         self.signal_update_buttons.connect(self.update_buttons)
         self.warmup_active = False
-        self.WarmUp()
         
         self.running = True
         self.mutex = threading.Lock()
@@ -136,20 +136,22 @@ class tehSeencode(QDialog):
         self.thread.signal_update_text.connect(self.update_text)
         self.thread.signal_update_button.connect(self.update_button_state)
         self.predicting = False
+        self.WarmUp()
 
     def WarmUp(self):
-        self.signal_update_buttons.emit(False)
-        self.TEXT.setText("Warming up...")
-        self.warmup_active = True
+        if not self.warmup_active:
+            self.signal_update_buttons.emit(False)
+            self.TEXT.setText("Warming up...")
+            self.warmup_active = True
 
-        def warmup_finished():
-            self.signal_update_buttons.emit(True)
-            self.TEXT.setText("Warmup complete!")
-            self.warmup_active = False
+            def warmup_finished():
+                self.signal_update_buttons.emit(True)
+                self.TEXT.setText("Warmup complete!")
+                self.warmup_active = False
 
-        warmup_task = WarmupTask(self.detect)
-        warmup_task.signals.finished.connect(warmup_finished)  # Kết nối tín hiệu finished với khe cắm warmup_finished
-        self.thread_pool.start(warmup_task)
+            warmup_task = WarmupTask(self.detect)
+            warmup_task.signals.finished.connect(warmup_finished)  # Kết nối tín hiệu finished với khe cắm warmup_finished
+            self.thread_pool.start(warmup_task)
          
 
     @pyqtSlot()
@@ -160,25 +162,26 @@ class tehSeencode(QDialog):
         Starts capturing video from the camera, creates and connects the face detection thread,
         and initiates the camera display loop.
         """
-        print("Button show click!")
-        self.TEXT.setText("Camera starting...")
-        self.warmup.setEnabled(False)
-        self.cap = cv2.VideoCapture(0)
+        if not self.predicting:
+            print("Button show click!")
+            self.TEXT.setText("Camera starting...")
+            self.warmup.setEnabled(False)
+            self.cap = cv2.VideoCapture(0)
 
-        # Tạo và kết nối luồng xử lý nhận diện
-        self.thread.cap = self.cap
-        self.thread.signal_update_text.connect(self.update_text)
-        self.thread.start()
+            # Tạo và kết nối luồng xử lý nhận diện
+            self.thread.cap = self.cap
+            self.thread.signal_update_text.connect(self.update_text)
+            self.thread.start()
 
-        # Bắt đầu vòng lặp hiển thị camera trong luồng chính
-        while (self.cap != None):
-            ret, frame = self.cap.read()
-            frame = cv2.flip(frame, 1)
+            # Bắt đầu vòng lặp hiển thị camera trong luồng chính
+            while (self.cap != None):
+                ret, frame = self.cap.read()
+                frame = cv2.flip(frame, 1)
 
-            if not ret:
-                break
-            self.displayImage(frame)
-            cv2.waitKey(1)
+                if not ret:
+                    break
+                self.displayImage(frame)
+                cv2.waitKey(1)
 
 
     def breakClicked(self):
@@ -198,6 +201,7 @@ class tehSeencode(QDialog):
             self.TEXT.setText("Camera stopped")
             self.cap = None
             self.warmup.setEnabled(True)
+            self.predicting = False
 
     def update_button_state(self, enabled):
         """
