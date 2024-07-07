@@ -7,7 +7,7 @@ from PyQt6.QtGui import QImage, QPixmap, QColor
 from PyQt6.QtWidgets import QDialog, QInputDialog
 from PyQt6.uic import loadUi
 from detection import faceDetection
-from tasks.warmup_task import WarmupTask, WarmupTaskSignals
+from tasks.warmup_task import WarmupTask
 from threads.recognition_thread import ThreadClass
 
 class MainScreen(QDialog):
