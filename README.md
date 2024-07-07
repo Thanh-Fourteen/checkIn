@@ -12,7 +12,7 @@ This is a simple face recognition attendance system built using Python, PyQt6, O
 
 ## Requirements
 
-- Python 3.7+
+- Python 3.9+
 - PyQt6
 - OpenCV
 - FaceTorch
