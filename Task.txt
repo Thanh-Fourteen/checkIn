@@ -6,18 +6,33 @@ Các phần chưa làm
     - Trong lúc đang detect or warmup không được break, warmup                                          (đã fix)
     - Trong lúc nhấn warmup không được nhấn show hoặc break                                             (đã fix)
     - Đang warmup nhấn thêm warmup nữa là bị lỗi                                                        (đã fix)
-    - Đang show nhấn tiếp show bị cảnh báo, và có thể gây ra lỗi                                        (chưa fix)
+    - Tuy chuyển qua welcome rồi mà vẫn detect                                                          (đã fix)
+    - Đang show nhấn tiếp show bị cảnh báo, và có thể gây ra lỗi                                        (Đã fix)
     - Warmup hơi Lâu                                                                                    (Chưa fix)
     - Lâu lâu mô hình analyze lại chạy vài giây có khi tới 1'                                           (chưa fix)
     - Nhiều mặt trong 1 khung camera, model sẽ không biết mặt nào cần detect                            (chưa fix)
         -> Cái này có thể đọc document xem thứ tự number of face của model analyze xử lý như thế nào
+    
 
 2. Các vấn đề chưa làm
-    - Buil ui cho đẹp
+    * Giao diện
+    - Tạo 1 nút back từ welcome về main                                                                 (Done)
+    - Đang show thì không được nhấn input name                                                          (Done)
+    - Xử lý nút input name                                                                              (Done)
+    - Set kích thước ban đầu là full màn hình                                                           (Done)
+    - Chỉnh tên của trang welcome                                                    
+    - Tách code ra nhiều file
+    - Khi ở trạng thái break thì khung camera bình thường                                               (Done)
+    - Build ui cho đẹp
     - Khởi tạo màn hình khởi động (Lúc mới mở chương trình thì show màn hình này, khởi động xong chương trình sẽ hiện Ui detect)
+
+
+    *Test thử
     - Thử xử lý với ảnh trắng đen
-    - Test chạy 3 tiếng
     - Test nhiều trường hợp khác nhau (nhiều người, ánh sáng, nhiễu,....)
+    - Test chạy 3 tiếng                                                                                 (Đã test)
+        -> Chạy được 2 tiếng thì tự tắt chưa hiểu lí do
+        ->  Nhưng máy không nóng, mở lên chạy tiếp vẫn oke
     - Test model chạy 30 -> 40 người                                                                    (Đã test)
         -> 30 hay 40 vẫn dự đoán nhanh. Quan trọng analyze phân tích nhanh hay chậm thôi
     

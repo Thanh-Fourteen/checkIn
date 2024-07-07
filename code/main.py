@@ -1,15 +1,25 @@
-from Final1.detection import functions
-import os
+import sys
+from PyQt6.QtWidgets import QApplication, QStackedWidget
+from screens.main_screen import MainScreen
+from screens.welcome_screen import WelcomeScreen
 
 if __name__ == "__main__":
     folder = "D:\\FPT\\AI\\9.5 AI\\Check In\\Final1"
-    f = functions(folder)
-    f.warmup()
+    app = QApplication(sys.argv)
+    
+    stacked_widget = QStackedWidget()
+    main_screen = MainScreen(folder=folder)
+    welcome_screen = WelcomeScreen(folder=folder)
+    
+    stacked_widget.addWidget(main_screen)
+    stacked_widget.addWidget(welcome_screen)
 
-    ## Save features in database
-    # directory = os.path.join(folder, 'img')
-    # f.process_images_from_directory(directory)
+    main_screen.stacked_widget = stacked_widget
+    main_screen.welcome_screen = welcome_screen
+    welcome_screen.setParent(stacked_widget)
 
-    img_path = os.path.join(folder, "my_image.png")
-    f.Recognition(img_path)
-    print("Done!")
+    stacked_widget.show()
+    stacked_widget.adjustSize()
+    stacked_widget.resize(stacked_widget.width() + 100, stacked_widget.height() + 50)
+
+    sys.exit(app.exec())

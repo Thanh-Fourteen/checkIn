@@ -27,7 +27,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>230</y>
+     <y>180</y>
      <width>141</width>
      <height>71</height>
     </rect>
@@ -62,7 +62,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>330</y>
+     <y>260</y>
      <width>141</width>
      <height>81</height>
     </rect>
@@ -74,14 +74,27 @@
   <widget class="QPushButton" name="warmup">
    <property name="geometry">
     <rect>
-     <x>32</x>
-     <y>438</y>
-     <width>131</width>
+     <x>30</x>
+     <y>350</y>
+     <width>141</width>
      <height>61</height>
     </rect>
    </property>
    <property name="text">
     <string>Warm up</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="inputButton">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>430</y>
+     <width>141</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Input Name</string>
    </property>
   </widget>
  </widget>
