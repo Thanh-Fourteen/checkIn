@@ -44,6 +44,7 @@ class ThreadClass(QtCore.QThread):
                 self.signal_update_button.emit(False)
                 imageio.imwrite(self.img_path, frame)
                 print(f"\n\nRecognizing with frame {frame_count}")
+                self.signal_update_text.emit("Model đang xử lý.")
                 name, acc = self.detect.predict_name(self.img_path)
                 if acc >= self.threshold:
                     self.signal_recognized.emit(name, acc)

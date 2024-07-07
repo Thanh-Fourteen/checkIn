@@ -21,7 +21,7 @@ Các phần chưa làm
     - Xử lý nút input name                                                                              (Done)
     - Set kích thước ban đầu là full màn hình                                                           (Done)
     - Chỉnh tên của trang welcome                                                    
-    - Tách code ra nhiều file
+    - Tách code ra nhiều file                                                                           (Done)
     - Khi ở trạng thái break thì khung camera bình thường                                               (Done)
     - Build ui cho đẹp
     - Khởi tạo màn hình khởi động (Lúc mới mở chương trình thì show màn hình này, khởi động xong chương trình sẽ hiện Ui detect)

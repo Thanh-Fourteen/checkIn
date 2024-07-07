@@ -4,23 +4,23 @@ import threading
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt, pyqtSlot, QThreadPool
 from PyQt6.QtGui import QImage, QPixmap, QColor
-from PyQt6.QtWidgets import QDialog, QInputDialog
+from PyQt6.QtWidgets import QDialog, QInputDialog, QMainWindow
 from PyQt6.uic import loadUi
 from detection import faceDetection
 from tasks.warmup_task import WarmupTask
 from threads.recognition_thread import ThreadClass
 
-class MainScreen(QDialog):
+class MainScreen(QMainWindow):
     signal_update_buttons = QtCore.pyqtSignal(bool)
-    
     def __init__(self, folder, parent=None, skip_frame_first=30, frame_skip=30, threshold=0.5):
         super(MainScreen, self).__init__(parent)
-        ui_path = os.path.join(folder,"UI", 'form.ui')
+        ui_path = os.path.join(folder,"UI", 'ui3.ui')
         loadUi(ui_path, self)
         self.folder = folder
         self.detect = faceDetection(self.folder)
 
         self.SHOW.clicked.connect(self.onClicked)
+        self.TEXT.setReadOnly(True)
         self.TEXT.setText('Findly Press')
         self.Break.clicked.connect(self.breakClicked)
         self.warmup.clicked.connect(self.WarmUp)
@@ -114,22 +114,41 @@ class MainScreen(QDialog):
     def update_buttons(self, enabled):
         self.SHOW.setEnabled(enabled)
         self.Break.setEnabled(enabled)
+        self.inputButton.setEnabled(enabled) 
+        self.warmup.setEnabled(enabled)
 
     def update_text(self, text):
         self.TEXT.setText(text)
     
     def displayImage(self, img):
-        qformat = QImage.Format.Format_Indexed8
-        if len(img.shape) == 3:
-            if img.shape[2] == 4:
-                qformat = QImage.Format.Format_RGB888
-            else:
-                qformat = QImage.Format.Format_RGB888
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         
-        img = QImage(img, img.shape[1], img.shape[0], qformat)
-        img = img.rgbSwapped()
-        self.imgLabel.setPixmap(QPixmap.fromImage(img))
+        # Tạo QImage từ ảnh
+        h, w, ch = img.shape
+        bytes_per_line = ch * w
+        qimg = QImage(img.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
+
+        # Tạo QPixmap từ QImage
+        pixmap = QPixmap.fromImage(qimg)
+
+        # Thay đổi kích thước pixmap để vừa với imgLabel, giữ nguyên tỷ lệ khung hình
+        scaled_pixmap = pixmap.scaled(self.imgLabel.size(), Qt.AspectRatioMode.KeepAspectRatio)
+
+        # Hiển thị pixmap trên imgLabel
+        self.imgLabel.setPixmap(scaled_pixmap)
         self.imgLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # qformat = QImage.Format.Format_Indexed8
+        # if len(img.shape) == 3:
+        #     if img.shape[2] == 4:
+        #         qformat = QImage.Format.Format_RGB888
+        #     else:
+        #         qformat = QImage.Format.Format_RGB888
+        
+        # img = QImage(img, img.shape[1], img.shape[0], qformat)
+        # img = img.rgbSwapped()
+        # self.imgLabel.setPixmap(QPixmap.fromImage(img))
+        # self.imgLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
     
     def onRecognized(self, name, acc):
         self.predicting = False
@@ -147,7 +166,7 @@ class MainScreen(QDialog):
         self.welcome_screen.update_text(name, 100)
     
     def closeEvent(self, event):
-        if self.predicting or self.warmup_active:
+        if (self.cap != None) or self.warmup_active:
             # Nếu predict_name đang chạy, chặn sự kiện đóng và thông báo cho người dùng
             event.ignore()
             self.TEXT.setText("Chương trình đang xử lý, hãy thử lại sau...")

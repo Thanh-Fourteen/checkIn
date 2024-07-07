@@ -194,6 +194,8 @@ class MainScreen(QDialog):
     def update_buttons(self, enabled):
         self.SHOW.setEnabled(enabled)
         self.Break.setEnabled(enabled)
+        self.inputButton.setEnabled(enabled) 
+        self.warmup.setEnabled(enabled)
 
     def update_text(self, text):
         self.TEXT.setText(text)
@@ -227,7 +229,7 @@ class MainScreen(QDialog):
         self.welcome_screen.update_text(name, 100)
     
     def closeEvent(self, event):
-        if self.predicting or self.warmup_active:
+        if (self.cap != None) or self.warmup_active:
             # Nếu predict_name đang chạy, chặn sự kiện đóng và thông báo cho người dùng
             event.ignore()
             self.TEXT.setText("Chương trình đang xử lý, hãy thử lại sau...")
@@ -235,6 +237,7 @@ class MainScreen(QDialog):
             # Nếu predict_name đã hoàn thành, cho phép đóng ứng dụng
             self.breakClicked()
             event.accept()
+
 
 if __name__ == "__main__":
     folder = "D:\\FPT\\AI\\9.5 AI\\Check In\\Final1"
@@ -257,5 +260,7 @@ if __name__ == "__main__":
 
     welcome_screen.setParent(stacked_widget)
 
-    sys.exit(app.exec())
-
+    # Ghi đè closeEvent của stacked_widget, không phải app
+    stacked_widget.closeEvent = main_screen.closeEvent  
+    app.exec()
+    # sys.exit(app.exec())

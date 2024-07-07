@@ -7,19 +7,23 @@ if __name__ == "__main__":
     folder = "D:\\FPT\\AI\\9.5 AI\\Check In\\Final1"
     app = QApplication(sys.argv)
     
+    # Create stacked widget and add screens
     stacked_widget = QStackedWidget()
     main_screen = MainScreen(folder=folder)
     welcome_screen = WelcomeScreen(folder=folder)
-    
     stacked_widget.addWidget(main_screen)
     stacked_widget.addWidget(welcome_screen)
+    stacked_widget.show()
+    stacked_widget.showMaximized()
+    # stacked_widget.adjustSize()
+    # stacked_widget.resize(stacked_widget.width() + 100, stacked_widget.height() + 50)
 
+    # Store stacked widget reference in main screen
     main_screen.stacked_widget = stacked_widget
     main_screen.welcome_screen = welcome_screen
+
     welcome_screen.setParent(stacked_widget)
 
-    stacked_widget.show()
-    stacked_widget.adjustSize()
-    stacked_widget.resize(stacked_widget.width() + 100, stacked_widget.height() + 50)
-
-    sys.exit(app.exec())
+    stacked_widget.closeEvent = main_screen.closeEvent  
+    app.exec()
+    # sys.exit(app.exec())
