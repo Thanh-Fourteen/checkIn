@@ -13,10 +13,10 @@ if __name__ == "__main__":
     welcome_screen = WelcomeScreen(folder=folder)
     stacked_widget.addWidget(main_screen)
     stacked_widget.addWidget(welcome_screen)
-    stacked_widget.show()
+    
+    # stacked_widget.show()
     stacked_widget.showMaximized()
-    # stacked_widget.adjustSize()
-    # stacked_widget.resize(stacked_widget.width() + 100, stacked_widget.height() + 50)
+    # stacked_widget.showFullScreen()
 
     # Store stacked widget reference in main screen
     main_screen.stacked_widget = stacked_widget
@@ -25,5 +25,6 @@ if __name__ == "__main__":
     welcome_screen.setParent(stacked_widget)
 
     stacked_widget.closeEvent = main_screen.closeEvent  
+
     app.exec()
     # sys.exit(app.exec())

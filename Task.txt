@@ -12,7 +12,15 @@ Các phần chưa làm
     - Lâu lâu mô hình analyze lại chạy vài giây có khi tới 1'                                           (chưa fix)
     - Nhiều mặt trong 1 khung camera, model sẽ không biết mặt nào cần detect                            (chưa fix)
         -> Cái này có thể đọc document xem thứ tự number of face của model analyze xử lý như thế nào
-    
+
+1.1 Lỗi UI.
+    - Thanh trắng ở dưới
+    - Hiện tại chỉ phóng to được, thu nhỏ là lỗi UI
+    - Chỉ phù hợp với 1 máy
+    - Khung nền của camera lúc hiện camera bị Lỗi
+    - Hình show ra bị méo                                                                               (Done)
+    - 2 thanh show text fix lại căn giữa
+    - Lỗi: QFont::setPointSize: Point size <= 0 (-1), must be greater than 0                            (Done)
 
 2. Các vấn đề chưa làm
     * Giao diện

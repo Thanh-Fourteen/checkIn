@@ -1,7 +1,7 @@
 import cv2
 import os
 import threading
-from PyQt6 import QtCore
+from PyQt6 import QtCore, QtGui
 from PyQt6.QtCore import Qt, pyqtSlot, QThreadPool
 from PyQt6.QtGui import QImage, QPixmap, QColor
 from PyQt6.QtWidgets import QDialog, QInputDialog, QMainWindow
@@ -14,14 +14,17 @@ class MainScreen(QMainWindow):
     signal_update_buttons = QtCore.pyqtSignal(bool)
     def __init__(self, folder, parent=None, skip_frame_first=30, frame_skip=30, threshold=0.5):
         super(MainScreen, self).__init__(parent)
-        ui_path = os.path.join(folder,"UI", 'ui3.ui')
+        ui_path = os.path.join(folder,"UI", 'form.ui')
         loadUi(ui_path, self)
         self.folder = folder
         self.detect = faceDetection(self.folder)
 
+        # self.label.setGeometry(0, 0, self.width(), self.height())
+
         self.SHOW.clicked.connect(self.onClicked)
         self.TEXT.setReadOnly(True)
         self.TEXT.setText('Findly Press')
+        self.TEXT.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
         self.Break.clicked.connect(self.breakClicked)
         self.warmup.clicked.connect(self.WarmUp)
         self.inputButton.clicked.connect(self.getInputName)
@@ -100,11 +103,14 @@ class MainScreen(QMainWindow):
             self.predicting = False
 
             # Tạo QPixmap trắng trơn
-            white_pixmap = QPixmap(self.imgLabel.size())
-            white_pixmap.fill(QColor("white"))
+            # white_pixmap = QPixmap(self.imgLabel.size())
+            # white_pixmap.fill(QColor("white"))
+            self.imgLabel.clear() 
+            self.imgLabel.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
 
             # Đặt QPixmap trắng vào imgLabel
-            self.imgLabel.setPixmap(white_pixmap)
+            self.imgLabel.update()
+            # self.imgLabel.setPixmap(white_pixmap)
 
     def update_button_state(self, enabled):
         self.Break.setEnabled(enabled)
