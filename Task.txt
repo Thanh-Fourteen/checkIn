@@ -17,7 +17,7 @@ Các phần chưa làm
     - Thanh trắng ở dưới
     - Hiện tại chỉ phóng to được, thu nhỏ là lỗi UI
     - Chỉ phù hợp với 1 máy
-    - Khung nền của camera lúc hiện camera bị Lỗi
+    - Khung nền của camera lúc hiện camera bị Lỗi                                                       (Done)
     - Hình show ra bị méo                                                                               (Done)
     - 2 thanh show text fix lại căn giữa
     - Lỗi: QFont::setPointSize: Point size <= 0 (-1), must be greater than 0                            (Done)

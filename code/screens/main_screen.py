@@ -2,8 +2,8 @@ import cv2
 import os
 import threading
 from PyQt6 import QtCore, QtGui
-from PyQt6.QtCore import Qt, pyqtSlot, QThreadPool
-from PyQt6.QtGui import QImage, QPixmap, QColor
+from PyQt6.QtCore import Qt, pyqtSlot, QThreadPool, QRectF
+from PyQt6.QtGui import QImage, QPixmap, QColor, QPixmap, QPainter, QPainterPath
 from PyQt6.QtWidgets import QDialog, QInputDialog, QMainWindow
 from PyQt6.uic import loadUi
 from detection import faceDetection
@@ -14,12 +14,12 @@ class MainScreen(QMainWindow):
     signal_update_buttons = QtCore.pyqtSignal(bool)
     def __init__(self, folder, parent=None, skip_frame_first=30, frame_skip=30, threshold=0.5):
         super(MainScreen, self).__init__(parent)
-        ui_path = os.path.join(folder,"UI", 'form.ui')
+        ui_path = os.path.join(folder,"UI", 'ui6.ui')
         loadUi(ui_path, self)
         self.folder = folder
         self.detect = faceDetection(self.folder)
 
-        # self.label.setGeometry(0, 0, self.width(), self.height())
+        self.label.setGeometry(0, 0, self.width(), self.height())
 
         self.SHOW.clicked.connect(self.onClicked)
         self.TEXT.setReadOnly(True)
@@ -33,6 +33,7 @@ class MainScreen(QMainWindow):
         self.thread_pool = QThreadPool()
         self.signal_update_buttons.connect(self.update_buttons)
         self.warmup_active = False
+        self.original_pixmap = self.imgLabel.pixmap()
         
         self.running = True
         self.mutex = threading.Lock()
@@ -102,15 +103,17 @@ class MainScreen(QMainWindow):
             self.SHOW.setEnabled(True)
             self.predicting = False
 
-            # Tạo QPixmap trắng trơn
-            # white_pixmap = QPixmap(self.imgLabel.size())
-            # white_pixmap.fill(QColor("white"))
-            self.imgLabel.clear() 
-            self.imgLabel.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
+            self.imgLabel.setPixmap(self.original_pixmap)
 
-            # Đặt QPixmap trắng vào imgLabel
-            self.imgLabel.update()
-            # self.imgLabel.setPixmap(white_pixmap)
+            # # Tạo QPixmap trắng trơn
+            # # white_pixmap = QPixmap(self.imgLabel.size())
+            # # white_pixmap.fill(QColor("white"))
+            # self.imgLabel.clear() 
+            # self.imgLabel.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
+
+            # # Đặt QPixmap trắng vào imgLabel
+            # self.imgLabel.update()
+            # # self.imgLabel.setPixmap(white_pixmap)
 
     def update_button_state(self, enabled):
         self.Break.setEnabled(enabled)
@@ -140,8 +143,21 @@ class MainScreen(QMainWindow):
         # Thay đổi kích thước pixmap để vừa với imgLabel, giữ nguyên tỷ lệ khung hình
         scaled_pixmap = pixmap.scaled(self.imgLabel.size(), Qt.AspectRatioMode.KeepAspectRatio)
 
+        # Tạo mask bo tròn và vẽ pixmap lên
+        mask_pixmap = QPixmap(scaled_pixmap.size())
+        mask_pixmap.fill(Qt.GlobalColor.transparent)
+        painter = QPainter(mask_pixmap)
+        painter.setRenderHints(QPainter.RenderHint.Antialiasing, True)
+        path = QPainterPath()
+        radius = 45 # Điều chỉnh bán kính bo tròn (giống trong file .ui)
+        rect = QRectF(0, 0, scaled_pixmap.width(), scaled_pixmap.height())
+        path.addRoundedRect(rect, radius, radius)
+        painter.setClipPath(path)
+        painter.drawPixmap(0, 0, scaled_pixmap)
+        painter.end()
+
         # Hiển thị pixmap trên imgLabel
-        self.imgLabel.setPixmap(scaled_pixmap)
+        self.imgLabel.setPixmap(mask_pixmap)
         self.imgLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # qformat = QImage.Format.Format_Indexed8
