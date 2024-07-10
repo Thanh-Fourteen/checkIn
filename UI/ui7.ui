@@ -44,7 +44,7 @@
     </property>
     <property name="font">
      <font>
-      <pointsize>-1</pointsize>
+      <pointsize>15</pointsize>
       <bold>true</bold>
      </font>
     </property>
@@ -80,7 +80,7 @@ font-size: 25px
     </property>
     <property name="font">
      <font>
-      <pointsize>-1</pointsize>
+      <pointsize>15</pointsize>
       <bold>true</bold>
      </font>
     </property>
@@ -106,7 +106,7 @@ font-size: 25px</string>
     </property>
     <property name="font">
      <font>
-      <pointsize>-1</pointsize>
+      <pointsize>15</pointsize>
       <bold>true</bold>
      </font>
     </property>
@@ -132,7 +132,7 @@ font-size: 25px</string>
     </property>
     <property name="font">
      <font>
-      <pointsize>-1</pointsize>
+      <pointsize>15</pointsize>
       <bold>true</bold>
      </font>
     </property>
@@ -275,7 +275,7 @@ border: 0px</string>
     </property>
     <property name="font">
      <font>
-      <pointsize>-1</pointsize>
+      <pointsize>15</pointsize>
       <bold>true</bold>
      </font>
     </property>

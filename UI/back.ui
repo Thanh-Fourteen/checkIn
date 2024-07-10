@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,118 +11,173 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Form</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>1536</width>
-      <height>864</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap>backbutton.png</pixmap>
-    </property>
-    <property name="scaledContents">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="TEXT">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>290</y>
-      <width>1300</width>
-      <height>315</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>2</pointsize>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">border-radius: 45px;
-background-color: #1f056a;
-border: 3px solid #d7d3e5;
-color: white;
-font-size: 60px</string>
-    </property>
-    <property name="html">
-     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-hr { height: 1px; border-width: 0; }
-li.unchecked::marker { content: &quot;\2610&quot;; }
-li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:60px; font-weight:700; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:60px;&quot;&gt;Welcome Tony&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>640</x>
-      <y>40</y>
-      <width>221</width>
-      <height>191</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap>WHITE.png</pixmap>
-    </property>
-    <property name="scaledContents">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="backButton">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>630</y>
-      <width>240</width>
-      <height>90</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>2</pointsize>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">border-radius: 45px;
-background-color: #1f056a;
-border: 3px solid #d7d3e5;
-color: white;
-font-size: 25px</string>
-    </property>
-    <property name="text">
-     <string>BACK</string>
-    </property>
-   </widget>
+  <widget class="QPushButton" name="backButton">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>40</y>
+     <width>131</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777213</width>
+     <height>16777215</height>
+    </size>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>25</pointsize>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: #0f0e3a;
+border-radius: 35px;
+color: white</string>
+   </property>
+   <property name="text">
+    <string>BACK</string>
+   </property>
   </widget>
-  <widget class="QMenuBar" name="menubar">
+  <widget class="QWidget" name="gridWidget" native="true">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>570</y>
+     <width>240</width>
+     <height>70</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>240</width>
+     <height>70</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>240</width>
+     <height>70</height>
+    </size>
+   </property>
+   <property name="sizeIncrement">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="sizeConstraint">
+     <enum>QLayout::SetNoConstraint</enum>
+    </property>
+   </layout>
+  </widget>
+  <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>1536</width>
-     <height>25</height>
+     <height>864</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap>newbac.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>670</x>
+     <y>40</y>
+     <width>191</width>
+     <height>181</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap>whitepanda.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>85</x>
+     <y>250</y>
+     <width>1370</width>
+     <height>470</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: #0f0e3a;
+border-radius: 200px;
+border: 2px solid gray;
+color: white</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="TEXT">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>290</y>
+     <width>1231</width>
+     <height>361</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>50</pointsize>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: #0f0e3a;
+border-radius: 100px;
+color: white</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <zorder>label</zorder>
+  <zorder>backButton</zorder>
+  <zorder>gridWidget</zorder>
+  <zorder>label_2</zorder>
+  <zorder>label_3</zorder>
+  <zorder>TEXT</zorder>
  </widget>
  <resources/>
  <connections/>

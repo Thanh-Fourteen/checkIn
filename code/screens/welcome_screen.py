@@ -13,7 +13,8 @@ class WelcomeScreen(QMainWindow):
         self.TEXT.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
     def update_text(self, name, acc):
-        self.TEXT.setText(f"Welcome, {name} (Accuracy: {acc:.2f})!")
+        # self.TEXT.setText(f"Welcome, {name} (Accuracy: {acc:.2f})!")
+        self.TEXT.setText(f"{name}, your presence is highly valued.")
     
     def goBack(self):
         self.parent().setCurrentIndex(0)

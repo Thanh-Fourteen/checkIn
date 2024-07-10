@@ -23,7 +23,7 @@ class MainScreen(QMainWindow):
 
         self.SHOW.clicked.connect(self.onClicked)
         self.TEXT.setReadOnly(True)
-        self.TEXT.setText('Findly Press')
+        self.TEXT.setText('Ready')
         self.TEXT.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
         self.Break.clicked.connect(self.breakClicked)
         self.warmup.clicked.connect(self.WarmUp)
@@ -179,7 +179,7 @@ class MainScreen(QMainWindow):
         self.welcome_screen.update_text(name, acc) 
     
     def getInputName(self):
-        name, ok = QInputDialog.getText(self, "Nhập tên", "Nhập tên:")
+        name, ok = QInputDialog.getText(self, "Input your name", "Enter name:")
         if ok and name:
             self.goToWelcomeScreen(name)
 
@@ -191,7 +191,7 @@ class MainScreen(QMainWindow):
         if (self.cap != None) or self.warmup_active:
             # Nếu predict_name đang chạy, chặn sự kiện đóng và thông báo cho người dùng
             event.ignore()
-            self.TEXT.setText("Chương trình đang xử lý, hãy thử lại sau...")
+            self.TEXT.setText("Still processing, try again soon.")
         else:
             # Nếu predict_name đã hoàn thành, cho phép đóng ứng dụng
             self.breakClicked()
