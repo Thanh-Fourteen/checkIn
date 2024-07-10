@@ -14,7 +14,7 @@ class MainScreen(QMainWindow):
     signal_update_buttons = QtCore.pyqtSignal(bool)
     def __init__(self, folder, parent=None, skip_frame_first=30, frame_skip=30, threshold=0.5):
         super(MainScreen, self).__init__(parent)
-        ui_path = os.path.join(folder,"UI", 'ui6.ui')
+        ui_path = os.path.join(folder,"UI", 'ui7.ui')
         loadUi(ui_path, self)
         self.folder = folder
         self.detect = faceDetection(self.folder)
@@ -43,7 +43,7 @@ class MainScreen(QMainWindow):
         self.thread.signal_update_button.connect(self.update_button_state)
         self.thread.signal_recognized.connect(self.onRecognized)
         self.predicting = False
-        self.WarmUp()
+        # self.WarmUp()
 
     def WarmUp(self):
         if not self.warmup_active:
