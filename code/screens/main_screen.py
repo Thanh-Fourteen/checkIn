@@ -28,6 +28,7 @@ class MainScreen(QMainWindow):
         self.Break.clicked.connect(self.breakClicked)
         self.warmup.clicked.connect(self.WarmUp)
         self.inputButton.clicked.connect(self.getInputName)
+        self.signin.clicked.connect(self.onSignInClicked)
 
         self.cap = None
         self.thread_pool = QThreadPool()
@@ -105,15 +106,25 @@ class MainScreen(QMainWindow):
 
             self.imgLabel.setPixmap(self.original_pixmap)
 
-            # # Tạo QPixmap trắng trơn
-            # # white_pixmap = QPixmap(self.imgLabel.size())
-            # # white_pixmap.fill(QColor("white"))
-            # self.imgLabel.clear() 
-            # self.imgLabel.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
+    def onSignInClicked(self):
+        try:
+            self.TEXT.setText("Capturing images...")
+            for frame in self.detect.register():  # Lặp qua từng frame từ camera
+                self.displayImage(frame)         # Hiển thị frame bằng displayImage
+                cv2.waitKey(1) 
 
-            # # Đặt QPixmap trắng vào imgLabel
-            # self.imgLabel.update()
-            # # self.imgLabel.setPixmap(white_pixmap)
+            self.TEXT.setText("Enter name:") 
+            person_name, ok = QInputDialog.getText(self, "Registration", "Enter the name of the person:")
+            if ok and person_name:
+                self.detect.process_registration(self.detect.captured_images, person_name)  # Xử lý ảnh và lưu vào database
+                self.TEXT.setText("Registration completed!")
+            else:
+                self.TEXT.setText("Tên không hợp lệ")
+
+        except Exception as e:
+            self.TEXT.append(f"Đã xảy ra lỗi: {e}")
+            
+        self.imgLabel.setPixmap(self.original_pixmap)
 
     def update_button_state(self, enabled):
         self.Break.setEnabled(enabled)

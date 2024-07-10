@@ -10,6 +10,7 @@ class WelcomeScreen(QMainWindow):
         loadUi(ui_path, self)
         
         self.backButton.clicked.connect(self.goBack)
+        self.TEXT.setReadOnly(True)
         self.TEXT.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
     def update_text(self, name, acc):

@@ -12,6 +12,12 @@ Các phần chưa làm
     - Lâu lâu mô hình analyze lại chạy vài giây có khi tới 1'                                           (chưa fix)
     - Nhiều mặt trong 1 khung camera, model sẽ không biết mặt nào cần detect                            (chưa fix)
         -> Cái này có thể đọc document xem thứ tự number of face của model analyze xử lý như thế nào
+    
+    - Xử lý sigin đa luồng. Khi chụp được 1 tấm, ta đưa vào luồng khác analysis, khi nào analysis đủ 5 tấm thì dừng camera
+        -> Ý tưởng: Chuyển hàm register về file MainScreen. xử dụng hình ảnh làm đa luồng
+    - khi đăng ký, ta không được nhấn các nút khác, không được tắt chương trình
+    - Camera ngược
+    - Khi camera xong thì phải quay về trang thái ban đầu
 
 1.1 Lỗi UI.
     - Thanh trắng ở dưới                                                                            
@@ -55,6 +61,4 @@ pip install PyQt6
 pip install "facetorch>=0.5.0" "torch==1.13.1+cu117" "torchvision==0.14.1+cu117" "torchaudio==0.13.1" --extra-index-url https://download.pytorch.org/whl/cu117
 pip uninstall numpy
 pip install numpy==1.23.0
-pip install imageio
-pip install opencv-python
-pip install pandas
+pip install imageio opencv-python pandas PyQt6

@@ -97,6 +97,19 @@
     <string>Input Name</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="signin">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>530</y>
+     <width>83</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>signin</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

@@ -195,6 +195,89 @@ class faceDetection():
             
         cap.release()
         cv2.destroyAllWindows()
+    
+    def register(self, camera_index=0, skip_frame_first = 50, frame_skip=30, num_images=5):
+        """
+        Captures images from the camera for registration.
+
+        Args:
+            camera_index (int): Index of the camera to use.
+            frame_skip (int): Number of frames to skip between captures.
+            num_images (int): Number of images to capture for registration.
+
+        Returns:
+            list: A list of paths to the captured images.
+        """
+        cap = cv2.VideoCapture(camera_index)
+        if not cap.isOpened():
+            print("Error: Could not open camera.")
+            return []  # Trả về danh sách rỗng nếu không mở được camera
+
+        self.captured_images = []
+        frame_count = 0
+
+        while len(self.captured_images) < num_images:
+            ret, frame = cap.read()
+            if not ret:
+                print("Error: Failed to capture image.")
+                break
+            frame = cv2.flip(frame, 1)
+            
+            if (frame_count > skip_frame_first) and (frame_count % frame_skip == 0):
+                img_name = f"capture_{len(self.captured_images)+1}.png"
+                path_img = os.path.join(self.folder, "img_temp", img_name)
+                cv2.imwrite(path_img, frame)
+                self.captured_images.append(path_img)
+
+            frame_count += 1
+            yield frame
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+        cap.release()
+        cv2.destroyAllWindows()
+        return 
+
+    def process_registration(self, captured_images, person_name):
+        """
+        Processes the captured images and saves the features to the database.
+
+        Args:
+            captured_images (list): List of paths to the captured images.
+            person_name (str): Name of the person being registered.
+        """
+        features_tensor = torch.tensor([]).to("cuda")
+        names = []
+
+        for img_path in captured_images:
+            try:
+                response = self.analyze_image(img_path)
+            except:
+                print(f"Don't analysis {img_path}")
+                continue
+
+            if len(response.faces) == 0:
+                print(f"No faces detected in the image {img_path}.")
+                continue
+
+            features = response.faces[0].preds['verify'].logits.unsqueeze(0)
+            names.append(person_name)
+            features_tensor = torch.concat((features_tensor, features), dim=0)
+
+        if len(names) > 0:
+            try:
+                existing_features = torch.load(self.database_path)
+                features_tensor = torch.concat((existing_features, features_tensor), dim=0)
+            except FileNotFoundError:
+                pass  # Nếu file chưa tồn tại, bỏ qua bước này
+            torch.save(features_tensor, self.database_path)
+
+            with open(self.name_path, 'a') as f:
+                pd.DataFrame({'name': names}).to_csv(f, header=f.tell() == 0, index=False)
+            print("Registration completed and data saved.")
+        else:
+            print("No valid images captured for registration.")
 
 if __name__ == "__main__":
     folder = "D:\\FPT\\AI\\9.5 AI\\Check In\\Final1"
