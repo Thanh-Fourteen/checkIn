@@ -9,7 +9,7 @@ class RegistrationThread(QtCore.QThread):
     signal_update_text = QtCore.pyqtSignal(str)
     signal_registration_finished = QtCore.pyqtSignal()
 
-    def __init__(self, folder, detect, cap, person_name, parent=None, num_images=5, skip_frame_first=50, frame_skip=30):
+    def __init__(self, folder, detect, cap, person_name, parent=None, num_images=5, skip_frame_first=20, frame_skip=30):
         super().__init__(parent)
         self.folder = folder
         self.detect = detect
