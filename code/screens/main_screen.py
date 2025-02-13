@@ -208,7 +208,7 @@ class MainScreen(QMainWindow):
             self.goToWelcomeScreen(name)
 
     def goToWelcomeScreen(self, name):
-        self.stacked_widget.setCurrentIndex(1)
+        # self.stacked_widget.setCurrentIndex(1)
         self.welcome_screen.update_text(name, 100)
     
     def closeEvent(self, event):

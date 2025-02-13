@@ -280,7 +280,7 @@ class faceDetection():
             print("No valid images captured for registration.")
 
 if __name__ == "__main__":
-    folder = "D:\\FPT\\AI\\9.5 AI\\Check In\\Final1"
+    folder = os.getcwd()
     f = faceDetection(folder)
     # f.warmup()
     directory = os.path.join(folder, 'img_database')

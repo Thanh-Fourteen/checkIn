@@ -18,5 +18,6 @@ class WelcomeScreen(QMainWindow):
         # self.TEXT.setText(f"Welcome, {name} (Accuracy: {acc:.2f})!")
         self.TEXT.setText(f"Have a productive day, {name}!")
     
-    # def goBack(self):
-    #     self.parent().setCurrentIndex(0)
+    def goBack(self):
+        pass
+        # self.parent().setCurrentIndex(0)
