@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QDockWidget, QMainWindow
+from PyQt6.QtWidgets import QMainWindow
 from PyQt6.uic import loadUi
 from PyQt6 import QtCore
 import os
@@ -10,6 +10,7 @@ class WelcomeScreen(QMainWindow):
         loadUi(ui_path, self)
         
         self.backButton.clicked.connect(self.goBack)
+        self.TEXT = self.findChild(QtCore.QObject, "TEXT")
         self.TEXT.setReadOnly(True)
         self.TEXT.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
@@ -17,5 +18,5 @@ class WelcomeScreen(QMainWindow):
         # self.TEXT.setText(f"Welcome, {name} (Accuracy: {acc:.2f})!")
         self.TEXT.setText(f"Have a productive day, {name}!")
     
-    def goBack(self):
-        self.parent().setCurrentIndex(0)
+    # def goBack(self):
+    #     self.parent().setCurrentIndex(0)

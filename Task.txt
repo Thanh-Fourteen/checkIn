@@ -1,61 +1,27 @@
+Task
+- Load lại github
+- 2 màn Hình
+- Hiển thị ảnh
+- Load thêm chỗ ngồi
+- Thâm giọng nói
+- Xuất ra file excel
+- Scale
+
 Các phần chưa làm
 1. Vấn đề đang gặp phải
-    - Chạy lâu lâu đang bị đứng                                                                         (đã fix)
-    - 2 người vào khung hình cũng bị đứng                                                               (đã fix)
-    - Trong lúc đang detect nếu mình tắt chương trình thì nó vẫn hoạt động                              (đã fix)
-    - Trong lúc đang detect or warmup không được break, warmup                                          (đã fix)
-    - Trong lúc nhấn warmup không được nhấn show hoặc break                                             (đã fix)
-    - Đang warmup nhấn thêm warmup nữa là bị lỗi                                                        (đã fix)
-    - Tuy chuyển qua welcome rồi mà vẫn detect                                                          (đã fix)
-    - Đang show nhấn tiếp show bị cảnh báo, và có thể gây ra lỗi                                        (Đã fix)
-    - Warmup hơi Lâu                                                                                    (Chưa fix)
-    - Lâu lâu mô hình analyze lại chạy vài giây có khi tới 1'                                           (chưa fix)
-    - Nhiều mặt trong 1 khung camera, model sẽ không biết mặt nào cần detect                            (chưa fix)
-        -> Cái này có thể đọc document xem thứ tự number of face của model analyze xử lý như thế nào
-    
-    - Xử lý sigin đa luồng. Khi chụp được 1 tấm, ta đưa vào luồng khác analysis, khi nào analysis đủ 5 tấm thì dừng camera
-        -> Ý tưởng: Chuyển hàm register về file MainScreen. xử dụng hình ảnh làm đa luồng               (Done)
-    - khi đăng ký, ta không được nhấn các nút khác, không được tắt chương trình
-    - Camera ngược                                                                                      (Done)
-    - Khi camera xong thì phải quay về trang thái ban đầu                                               (Done)
-    - Fix lại màu của khung điền tên
 
 1.1 Lỗi UI.
     - Thanh trắng ở dưới                                                                            
     - Hiện tại chỉ phóng to được, thu nhỏ là lỗi UI
     - Chỉ phù hợp với 1 máy
-    - Khung nền của camera lúc hiện camera bị Lỗi                                                       (Done)
-    - Hình show ra bị méo                                                                               (Done)
     - 2 thanh show text fix lại căn giữa
-    - Lỗi: QFont::setPointSize: Point size <= 0 (-1), must be greater than 0                            (Done)
 
 2. Các vấn đề chưa làm
     * Giao diện
-    - Tạo 1 nút back từ welcome về main                                                                 (Done)
-    - Đang show thì không được nhấn input name                                                          (Done)
-    - Xử lý nút input name                                                                              (Done)
-    - Set kích thước ban đầu là full màn hình                                                           (Done)
     - Chỉnh tên của trang welcome                                                    
-    - Tách code ra nhiều file                                                                           (Done)
-    - Khi ở trạng thái break thì khung camera bình thường                                               (Done)
     - Build ui cho đẹp
     - Khởi tạo màn hình khởi động (Lúc mới mở chương trình thì show màn hình này, khởi động xong chương trình sẽ hiện Ui detect)
 
-
-    *Test thử
-    - Thử xử lý với ảnh trắng đen
-    - Test nhiều trường hợp khác nhau (nhiều người, ánh sáng, nhiễu,....)
-    - Test chạy 3 tiếng                                                                                 (Đã test)
-        -> Chạy được 2 tiếng thì tự tắt chưa hiểu lí do
-        ->  Nhưng máy không nóng, mở lên chạy tiếp vẫn oke
-    - Test model chạy 30 -> 40 người                                                                    (Đã test)
-        -> 30 hay 40 vẫn dự đoán nhanh. Quan trọng analyze phân tích nhanh hay chậm thôi
-    
-
-3. Option
-    - Cải thiện model cho chạy nhanh hơn 
-    - Thêm nút check in (option)
-    - Detect nhiều người
 
 
 pip install PyQt6

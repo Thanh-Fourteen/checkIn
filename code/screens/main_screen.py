@@ -49,6 +49,7 @@ class MainScreen(QMainWindow):
         self.thread.signal_update_button.connect(self.update_button_state)
         self.thread.signal_recognized.connect(self.onRecognized)
         self.predicting = False
+        self.welcome_screen = None
 
     def WarmUp(self):
         if not self.warmup_active and not self.showing_camera and not self.registering:
@@ -194,22 +195,11 @@ class MainScreen(QMainWindow):
         self.imgLabel.setPixmap(mask_pixmap)
         self.imgLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        # qformat = QImage.Format.Format_Indexed8
-        # if len(img.shape) == 3:
-        #     if img.shape[2] == 4:
-        #         qformat = QImage.Format.Format_RGB888
-        #     else:
-        #         qformat = QImage.Format.Format_RGB888
-        
-        # img = QImage(img, img.shape[1], img.shape[0], qformat)
-        # img = img.rgbSwapped()
-        # self.imgLabel.setPixmap(QPixmap.fromImage(img))
-        # self.imgLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
     
     def onRecognized(self, name, acc):
         self.predicting = False
         self.breakClicked() 
-        self.stacked_widget.setCurrentIndex(1)  
+        # self.stacked_widget.setCurrentIndex(1)  
         self.welcome_screen.update_text(name, acc) 
     
     def getInputName(self):
