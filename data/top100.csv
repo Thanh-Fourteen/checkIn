@@ -1,8 +1,8 @@
-names,position,checkin,path,voice
-Huy Anh SE11,A1,False,HuyAnh.jpg,Huy.mp3
-Khoa Ngô SE,A3,False,KhoaNgo.jpg,Khoa.mp3
-Khôi SE1,A4,False,Khoi.jpg,
-Lộc SE,A6,False,Loc.jpg,Loc.mp3
-Tân SS,A12,True,Tan.jpg,Tan.mp3
-Thanh SS,B18,True,Thanh.jpg,Thanh.mp3
-Phụ Huynh Mi,B19,False,Minh.jpg,
+idx,names,id,isparent,position,checkin,path,voice
+0,Huy Anh,se11,False,A1,False,HuyAnh.jpg,Huy.mp3
+1,Khoa Ngô,se13,False,A3,False,KhoaNgo.jpg,Khoa.mp3
+2,Khôi,se19,False,A4,False,Khoi.jpg,
+3,Lộc,se20,False,A6,False,Loc.jpg,Loc.mp3
+4,Tân,ss07,True,A12,True,Tan.jpg,Tan.mp3
+5,Thanh,ss36,False,B18,True,Thanh.jpg,Thanh.mp3
+6,Phụ Huynh Minh,gd12,True,B19,True,Minh.jpg,Minh.mp3

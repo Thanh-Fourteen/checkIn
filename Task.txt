@@ -1,9 +1,7 @@
 Task
-- Load thêm chỗ ngồi
 - Thâm giọng nói
 - Xuất ra file excel
     + Check in bằng tay cũng sửa thành True
-    + Điểm danh khuôn mặt cũng True
 - Scale
 - Detect không ra thì nhập tên -> load ảnh theo tên để wellcome
 - size ảnh load lên khác nhau

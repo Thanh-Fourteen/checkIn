@@ -4,7 +4,7 @@ import threading
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt, pyqtSlot, QThreadPool, QRectF
 from PyQt6.QtGui import QImage, QPixmap, QPixmap, QPainter, QPainterPath
-from PyQt6.QtWidgets import QInputDialog, QMainWindow
+from PyQt6.QtWidgets import QInputDialog, QMainWindow, QMessageBox
 from PyQt6.uic import loadUi
 from detection import faceDetection
 from tasks.warmup_task import WarmupTask
@@ -203,13 +203,18 @@ class MainScreen(QMainWindow):
         self.welcome_screen.update_text(name, acc) 
     
     def getInputName(self):
-        name, ok = QInputDialog.getText(self, "Input your name", "Enter name:")
-        if ok and name:
-            self.goToWelcomeScreen(name)
+        id, ok = QInputDialog.getText(self, "Input your ID", "Enter ID:")
+        if ok and id:
+            reply = QMessageBox.question(self, "Parent Confirmation",
+                                     "Are you a parent?",
+                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                                     QMessageBox.StandardButton.No)
+            is_parent = (reply == QMessageBox.StandardButton.Yes)
+            self.goToWelcomeScreen(id, is_parent) 
 
-    def goToWelcomeScreen(self, name):
+    def goToWelcomeScreen(self, name, is_parent):
         # self.stacked_widget.setCurrentIndex(1)
-        self.welcome_screen.update_text(name, 100)
+        self.welcome_screen.name2idx(name, is_parent)
     
     def closeEvent(self, event):
         if (self.cap != None) or self.warmup_active:

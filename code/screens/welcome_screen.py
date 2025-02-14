@@ -33,11 +33,29 @@ class WelcomeScreen(QMainWindow):
         self.engine.setProperty('rate', 200)
         self.engine.setProperty('voice', 'com.apple.voice.compact.vi-VN.Linh') 
 
+    def name2idx(self, name, is_parent):
+        idx = -1
+
+        self.df['id'] = self.df['id'].astype(str).str.lower()
+
+        condition1 = self.df['id'].str.contains(str(name).lower(), na=False) 
+        condition2 = self.df['isparent'] == is_parent  
+
+        match = self.df[condition1 & condition2]
+
+        if not match.empty:
+            idx = int(match.iloc[0]['idx'])
+            self.update_text(idx, 100)
+        else:
+            print("Find name error: No matching row found")
+
+
     def load_csv(self):
         self.df = pd.read_csv(self.csv_path)
 
     def update_text(self, idx, acc):
         name = self.df.loc[idx, 'names']
+        id = self.df.loc[idx, 'id']
         pos = self.df.loc[idx, 'position']
         img_path = self.df.loc[idx, 'path']
         voice_path = self.df.loc[idx, 'voice']
@@ -51,7 +69,7 @@ class WelcomeScreen(QMainWindow):
         self.default_image_path = img_path
         self.load_image(self.default_image_path)
 
-        textName = f"Chào mừng {name} đến với buổi vinh danh."
+        textName = f"Chào mừng {name} {id} đến với buổi vinh danh."
         textPos = f"Vị trí ghế là {pos}"
 
         self.name.setText(textName)
