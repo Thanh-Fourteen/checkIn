@@ -1,8 +1,8 @@
 idx,names,id,isparent,position,checkin,path,voice
-0,Huy Anh,se11,False,A1,False,HuyAnh.jpg,Huy.mp3
-1,Khoa Ngô,se13,False,A3,False,KhoaNgo.jpg,Khoa.mp3
-2,Khôi,se19,False,A4,False,Khoi.jpg,
-3,Lộc,se20,False,A6,False,Loc.jpg,Loc.mp3
-4,Tân,ss07,True,A12,True,Tan.jpg,Tan.mp3
-5,Thanh,ss36,False,B18,True,Thanh.jpg,Thanh.mp3
+0,Huy Anh,se11,False,A1,False,HuyAnh.jpg,Trần_Huy_Anh.mp3
+1,Khoa Ngô,se13,False,A3,False,KhoaNgo.jpg,Ngô_Quốc_Anh_Khoa.mp3
+2,Khôi,se19,False,A4,False,Khoi.jpg,Vũ_Anh_Khôi.mp3
+3,Lộc,se20,False,A6,False,Loc.jpg,Phan_Minh_Lộc.mp3
+4,Tân,ss07,True,A12,True,Tan.jpg,Mai_Nhật_Tân.mp3
+5,Thanh,ss36,False,B18,True,Thanh.jpg,Nguyễn_Nhựt_Thanh.mp3
 6,Phụ Huynh Minh,gd12,True,B19,True,Minh.jpg,Minh.mp3

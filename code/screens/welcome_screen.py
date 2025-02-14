@@ -2,13 +2,15 @@ from PyQt6.QtWidgets import QMainWindow, QLabel
 from PyQt6.uic import loadUi
 from PyQt6 import QtCore
 from PyQt6.QtGui import QPixmap, QImage, QPainter, QPainterPath
-from PyQt6.QtCore import Qt, QRectF
+from PyQt6.QtCore import Qt, QRectF, pyqtSignal
 import os
 import cv2
-import pyttsx3
 import pandas as pd
+import soundfile as sf
+import sounddevice as sd
 
 class WelcomeScreen(QMainWindow):
+    signal_no_match_found = pyqtSignal(str)
     def __init__(self, folder, csv_path, parent=None):
         super(WelcomeScreen, self).__init__(parent)
         self.folder = folder
@@ -29,10 +31,6 @@ class WelcomeScreen(QMainWindow):
         self.csv_path = csv_path
         self.load_csv()
 
-        self.engine = pyttsx3.init()
-        self.engine.setProperty('rate', 200)
-        self.engine.setProperty('voice', 'com.apple.voice.compact.vi-VN.Linh') 
-
     def name2idx(self, name, is_parent):
         idx = -1
 
@@ -45,9 +43,11 @@ class WelcomeScreen(QMainWindow):
 
         if not match.empty:
             idx = int(match.iloc[0]['idx'])
+            self.signal_no_match_found.emit("Success found")
             self.update_text(idx, 100)
         else:
-            print("Find name error: No matching row found")
+            self.signal_no_match_found.emit("Find name error")
+            print("Find name error")
 
 
     def load_csv(self):
@@ -61,7 +61,7 @@ class WelcomeScreen(QMainWindow):
         voice_path = self.df.loc[idx, 'voice']
         
         img_path = os.path.join(self.folder, "img_database", img_path)
-        voice_path = os.path.join(self.folder, "voice", voice_path)
+        audio_path = os.path.join(self.folder, "voice", voice_path)
         self.df.loc[idx, 'checkin'] = True
 
         self.df.to_csv(self.csv_path, index=False)  
@@ -75,11 +75,12 @@ class WelcomeScreen(QMainWindow):
         self.name.setText(textName)
         self.posi.setText(textPos)
 
-        self.engine.say(textName)
-        self.engine.runAndWait()
-        self.engine.say(textPos)
-        self.engine.runAndWait()
+        self.load_audio(audio_path)
     
+    def load_audio(self, audio_path):
+        audio, sample_rate = sf.read(audio_path)
+        sd.play(audio, sample_rate)
+
     def load_image(self, image_path):
         if os.path.exists(image_path):
             # Use OpenCV to load the image

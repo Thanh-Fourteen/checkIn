@@ -1,10 +1,5 @@
 Task
-- Thâm giọng nói
-- Xuất ra file excel
-    + Check in bằng tay cũng sửa thành True
-- Scale
-- Detect không ra thì nhập tên -> load ảnh theo tên để wellcome
-- size ảnh load lên khác nhau
+- Scale khi cắm sang màn hình khác
 
 Các phần chưa làm
 1. Vấn đề đang gặp phải

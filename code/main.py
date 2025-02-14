@@ -13,6 +13,7 @@ if __name__ == "__main__":
     welcome_screen = WelcomeScreen(folder=folder, csv_path=csv_path)
 
     main_screen.welcome_screen = welcome_screen 
+    main_screen.welcome_screen.signal_no_match_found.connect(main_screen.update_text)
 
     main_screen.showMaximized()
     welcome_screen.show() 
