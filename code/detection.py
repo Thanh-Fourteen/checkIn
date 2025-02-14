@@ -27,8 +27,8 @@ class faceDetection():
         self.path_config = os.path.join(folder,"data", "gpu.config.yml")
         self.cfg = OmegaConf.load(self.path_config)
         self.analyzer = FaceAnalyzer(self.cfg.analyzer)
-        self.name_path = os.path.join(folder,"data", "names.csv")
-        self.database_path = os.path.join(folder,"data", "features_database.pt")
+        self.name_path = os.path.join(folder,"data", "top100.csv")
+        self.database_path = os.path.join(folder,"data", "top100.pt")
 
     def warmup(self):
         """
@@ -46,8 +46,9 @@ class faceDetection():
                 return_img_data=False,
                 include_tensors=True
             )
-        self.predict_name(path_img_input)
-        self.predict_name(path_img_input_2)
+        warmup_database = os.path.join(self.folder,"data", "features_database.pt")
+        self.predict_name(path_img_input, warmup_database)
+        self.predict_name(path_img_input_2, warmup_database)
         print("Warmup done!")
         
     def analyze_image(self, image_path):
@@ -69,37 +70,27 @@ class faceDetection():
         )
         return response
     
-    def process_images_from_directory(self, directory: str):
-        """
-        Analyzes images from a directory, extracts features, and saves them to a database.
-
-        Args:
-            directory (str): Path to the directory containing the images.
-        """
+    def process_images_from_directory(self):
+        df = pd.read_csv(self.name_path)
+        directory = df['path']
         features_tensor = torch.tensor([]).to("cuda")
-        name = []
-        for filename in os.listdir(directory):
-            print(f"{filename}")
-            if filename.lower().endswith(('.png', '.jpg', '.jpeg')):
-                img_path = os.path.join(directory, filename)
-                try:
-                    response = self.analyze_image(img_path)
-                except:
-                    print(f"Don't analysis {filename}")
-                    continue
-                
-                if len(response.faces) == 0:
-                    print(f"No faces detected in the image {img_path}.")
-                    continue
-                
-                features = response.faces[0].preds['verify'].logits.unsqueeze(0)
-                name.append(filename)
-                features_tensor = torch.concat((features_tensor, features), dim = 0)
-            print(f"Done {filename}")
+
+        for img in directory:
+            img_path = os.path.join(self.folder, "img_database", img)
+            try:
+                response = self.analyze_image(img_path)
+            except:
+                print(f"Don't analysis {img_path}")
+                continue
+            if len(response.faces) == 0:
+                print(f"No faces detected in the image {img_path}.")
+                continue
+
+            features = response.faces[0].preds['verify'].logits.unsqueeze(0)
+            features_tensor = torch.concat((features_tensor, features), dim = 0)
+            print(f"Done {img_path}")
 
         torch.save(features_tensor, self.database_path)  
-        df = pd.DataFrame({'name': name})
-        df.to_csv(self.name_path, index=False)  
     
     def get_sim_feature_index(self, X, y, eps=torch.tensor(1e-8)):
         """
@@ -133,7 +124,7 @@ class faceDetection():
 
         return index, value
 
-    def predict_name(self, image_path):
+    def predict_name(self, image_path, database_path = None):
         """
         Predicts the name of a person in the given image by comparing its facial features
         to the database of known faces.
@@ -144,14 +135,14 @@ class faceDetection():
         Returns:
             tuple: Name of the predicted person and the similarity score.
         """
-        name = pd.read_csv(self.name_path)
-        features = torch.load(self.database_path)
+        database_path = self.database_path if database_path is None else database_path
+        features = torch.load(database_path)
         features = features.T
 
         print("Analyzing")
         response = self.analyze_image(image_path)
         if len(response.faces) == 0:
-            return "notFound", 0.0
+            return -1, 0.0
 
         print('Analysis completed')
         print(f"Number of face: {len(response.faces)}")
@@ -159,7 +150,7 @@ class faceDetection():
         feature.unsqueeze_(0)
 
         idx, acc = self.get_sim_feature_index(features, feature)
-        return name['name'][idx], acc
+        return idx, acc
 
     def Recognition(self, img_path, skip_frame_first = 100, frame_skip=80, threshold = 0.5):
         """
@@ -187,9 +178,9 @@ class faceDetection():
                 continue
             
             imageio.imwrite(img_path, frame)
-            name, acc = self.predict_name(img_path)
+            idx, acc = self.predict_name(img_path)
             if acc >= threshold:
-                print(f"Best match: {name} with similarity {acc:.2f}")
+                print(f"Best match: {idx} with similarity {acc:.2f}")
             else:
                 print("No match found.")
             
@@ -283,8 +274,7 @@ if __name__ == "__main__":
     folder = os.getcwd()
     f = faceDetection(folder)
     # f.warmup()
-    directory = os.path.join(folder, 'img_database')
-    f.process_images_from_directory(directory)
+    f.process_images_from_directory()
 
     # img_path = os.path.join(folder,"img_temp", "my_image.png")
     # f.Recognition(img_path)

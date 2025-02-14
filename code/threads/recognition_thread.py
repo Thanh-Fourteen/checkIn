@@ -5,9 +5,9 @@ from PyQt6 import QtCore
 class ThreadClass(QtCore.QThread):
     signal_update_text = QtCore.pyqtSignal(str)
     signal_update_button = QtCore.pyqtSignal(bool)
-    signal_recognized = QtCore.pyqtSignal(str, float)
+    signal_recognized = QtCore.pyqtSignal(int, float)
 
-    def __init__(self, folder, detect, mutex, parent=None, skip_frame_first=30, frame_skip=30, threshold=0.5):
+    def __init__(self, folder, detect, mutex, parent=None, skip_frame_first=5, frame_skip=20, threshold=0.5):
         super(ThreadClass, self).__init__(parent)
         self.folder = folder
         self.detect = detect
@@ -39,17 +39,17 @@ class ThreadClass(QtCore.QThread):
             frame_count += 1
             if (frame_count < self.skip_frame_first) or (frame_count % self.frame_skip != 0):
                 continue
-            
+
             with self.mutex:
                 self.signal_update_button.emit(False)
                 imageio.imwrite(self.img_path, frame)
                 print(f"\n\nRecognizing with frame {frame_count}")
                 self.signal_update_text.emit("Model đang xử lý.")
-                name, acc = self.detect.predict_name(self.img_path)
+                idx, acc = self.detect.predict_name(self.img_path)
                 if acc >= self.threshold:
-                    self.signal_recognized.emit(name, acc)
+                    self.signal_recognized.emit(idx, acc)
                     self.running = False
-                elif (name == "notFound"):
+                elif (idx == -1):
                     self.signal_update_text.emit("No faces detected in the camera.")
                 else:
                     self.signal_update_text.emit("No match found.")

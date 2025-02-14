@@ -13,42 +13,6 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QPushButton" name="backButton">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>40</y>
-     <width>131</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>16777213</width>
-     <height>16777215</height>
-    </size>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>25</pointsize>
-     <bold>false</bold>
-    </font>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: #0f0e3a;
-border-radius: 35px;
-color: white</string>
-   </property>
-   <property name="text">
-    <string>BACK</string>
-   </property>
-  </widget>
   <widget class="QWidget" name="gridWidget" native="true">
    <property name="enabled">
     <bool>true</bool>
@@ -173,7 +137,6 @@ color: white</string>
    </property>
   </widget>
   <zorder>label</zorder>
-  <zorder>backButton</zorder>
   <zorder>gridWidget</zorder>
   <zorder>label_2</zorder>
   <zorder>label_3</zorder>

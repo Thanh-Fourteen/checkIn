@@ -1,23 +1,111 @@
-from PyQt6.QtWidgets import QMainWindow
+from PyQt6.QtWidgets import QMainWindow, QLabel
 from PyQt6.uic import loadUi
 from PyQt6 import QtCore
+from PyQt6.QtGui import QPixmap, QImage, QPainter, QPainterPath
+from PyQt6.QtCore import Qt, QRectF
 import os
+import cv2
+import pyttsx3
+import pandas as pd
 
 class WelcomeScreen(QMainWindow):
-    def __init__(self, folder, parent=None):
+    def __init__(self, folder, csv_path, parent=None):
         super(WelcomeScreen, self).__init__(parent)
-        ui_path = os.path.join(folder, "UI", 'back.ui')
+        self.folder = folder
+        ui_path = os.path.join(folder, "UI", 'wellcome.ui')
         loadUi(ui_path, self)
         
-        self.backButton.clicked.connect(self.goBack)
-        self.TEXT = self.findChild(QtCore.QObject, "TEXT")
-        self.TEXT.setReadOnly(True)
-        self.TEXT.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.name = self.findChild(QtCore.QObject, "name")
+        self.name.setReadOnly(True)
+        self.name.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
-    def update_text(self, name, acc):
-        # self.TEXT.setText(f"Welcome, {name} (Accuracy: {acc:.2f})!")
-        self.TEXT.setText(f"Have a productive day, {name}!")
+        self.posi = self.findChild(QtCore.QObject, "posi")
+        self.posi.setReadOnly(True)
+        self.posi.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+
+        self.imgLabel = self.findChild(QLabel, "img")
+        self.radius = 43  
+
+        self.csv_path = csv_path
+        self.load_csv()
+
+        self.engine = pyttsx3.init()
+        self.engine.setProperty('rate', 200)
+        self.engine.setProperty('voice', 'com.apple.voice.compact.vi-VN.Linh') 
+
+    def load_csv(self):
+        self.df = pd.read_csv(self.csv_path)
+
+    def update_text(self, idx, acc):
+        name = self.df.loc[idx, 'names']
+        pos = self.df.loc[idx, 'position']
+        img_path = self.df.loc[idx, 'path']
+        voice_path = self.df.loc[idx, 'voice']
+        
+        img_path = os.path.join(self.folder, "img_database", img_path)
+        voice_path = os.path.join(self.folder, "voice", voice_path)
+        self.df.loc[idx, 'checkin'] = True
+
+        self.df.to_csv(self.csv_path, index=False)  
+
+        self.default_image_path = img_path
+        self.load_image(self.default_image_path)
+
+        textName = f"Chào mừng {name} đến với buổi vinh danh."
+        textPos = f"Vị trí ghế là {pos}"
+
+        self.name.setText(textName)
+        self.posi.setText(textPos)
+
+        self.engine.say(textName)
+        self.engine.runAndWait()
+        self.engine.say(textPos)
+        self.engine.runAndWait()
     
-    def goBack(self):
-        pass
-        # self.parent().setCurrentIndex(0)
+    def load_image(self, image_path):
+        if os.path.exists(image_path):
+            # Use OpenCV to load the image
+            img = cv2.imread(image_path)
+            if img is None:
+                print(f"Error: Could not load image with OpenCV from {image_path}")
+                self.load_default_image() # Load a default image
+                return
+
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            h, w, ch = img.shape
+
+            bytes_per_line = ch * w
+            qimg = QImage(img.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
+
+            pixmap = QPixmap.fromImage(qimg)
+            scaled_pixmap = pixmap.scaled(self.imgLabel.size(), Qt.AspectRatioMode.KeepAspectRatio)
+            rounded_pixmap = self.round_corners(scaled_pixmap, self.radius)
+
+            self.imgLabel.setPixmap(rounded_pixmap)
+            self.imgLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        else:
+            print(f"Image not found: {image_path}")
+            self.load_default_image()
+
+    def round_corners(self, pixmap, radius):
+        """Applies rounded corners to the given QPixmap."""
+        mask_pixmap = QPixmap(pixmap.size())
+        mask_pixmap.fill(Qt.GlobalColor.transparent)
+
+        painter = QPainter(mask_pixmap)
+        painter.setRenderHints(QPainter.RenderHint.Antialiasing | QPainter.RenderHint.SmoothPixmapTransform, True)  # More hints
+        path = QPainterPath()
+        rect = QRectF(0, 0, pixmap.width(), pixmap.height())
+        path.addRoundedRect(rect, radius, radius)
+        painter.setClipPath(path)
+        painter.drawPixmap(0, 0, pixmap)
+        painter.end()
+
+        return mask_pixmap
+
+    def load_default_image(self):
+        """Loads and displays the default image with rounded corners."""
+        if os.path.exists(self.default_image_path):
+            self.load_image(self.default_image_path)
+        else:
+            print(f"Default image not found: {self.default_image_path}")

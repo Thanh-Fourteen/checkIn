@@ -1,10 +1,10 @@
 import cv2
 import os
 import threading
-from PyQt6 import QtCore, QtGui
+from PyQt6 import QtCore
 from PyQt6.QtCore import Qt, pyqtSlot, QThreadPool, QRectF
-from PyQt6.QtGui import QImage, QPixmap, QColor, QPixmap, QPainter, QPainterPath
-from PyQt6.QtWidgets import QDialog, QInputDialog, QMainWindow
+from PyQt6.QtGui import QImage, QPixmap, QPixmap, QPainter, QPainterPath
+from PyQt6.QtWidgets import QInputDialog, QMainWindow
 from PyQt6.uic import loadUi
 from detection import faceDetection
 from tasks.warmup_task import WarmupTask
@@ -13,7 +13,7 @@ from threads.registration_thread import RegistrationThread
 
 class MainScreen(QMainWindow):
     signal_update_buttons = QtCore.pyqtSignal(bool)
-    def __init__(self, folder, parent=None, skip_frame_first=10, frame_skip=30, threshold=0.5):
+    def __init__(self, folder, parent=None, skip_frame_first=10, frame_skip=10, threshold=0.5):
         super(MainScreen, self).__init__(parent)
         ui_path = os.path.join(folder,"UI", 'main.ui')
         loadUi(ui_path, self)
