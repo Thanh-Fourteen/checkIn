@@ -14,6 +14,7 @@ import os
 import pandas as pd
 import imageio
 
+from PIL import Image
 
 class faceDetection():
     def __init__(self, folder):
@@ -27,8 +28,8 @@ class faceDetection():
         self.path_config = os.path.join(folder,"data", "gpu.config.yml")
         self.cfg = OmegaConf.load(self.path_config)
         self.analyzer = FaceAnalyzer(self.cfg.analyzer)
-        self.name_path = os.path.join(folder,"data", "top100.csv")
-        self.database_path = os.path.join(folder,"data", "top100.pt")
+        self.name_path = os.path.join(folder,"data", "svxs.csv")
+        self.database_path = os.path.join(folder,"data", "svxs.pt")
 
     def warmup(self):
         """
@@ -69,18 +70,18 @@ class faceDetection():
             include_tensors=True
         )
         return response
-    
+
     def process_images_from_directory(self):
         df = pd.read_csv(self.name_path)
         directory = df['path']
         features_tensor = torch.tensor([]).to("cuda")
 
         for img in directory:
-            img_path = os.path.join(self.folder, "img_database", img)
+            img_path = os.path.join(self.folder, "Best_Name", img)
             try:
                 response = self.analyze_image(img_path)
-            except:
-                print(f"Don't analysis {img_path}")
+            except Exception as e:
+                print(f"Failed to analyze {img_path}: {e}")
                 continue
             if len(response.faces) == 0:
                 print(f"No faces detected in the image {img_path}.")

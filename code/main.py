@@ -6,7 +6,7 @@ from screens.welcome_screen import WelcomeScreen
 
 if __name__ == "__main__":
     folder = os.getcwd()
-    csv_path = os.path.join(folder,"data", "top100.csv")
+    csv_path = os.path.join(folder,"data", "svxs.csv")
     app = QApplication(sys.argv)
 
     main_screen = MainScreen(folder=folder)
