@@ -44,7 +44,7 @@ class WelcomeScreen(QMainWindow):
         if not match.empty:
             idx = int(match.iloc[0]['idx'])
             self.signal_no_match_found.emit("Success found")
-            self.update_text(idx-1, 100)
+            self.update_text(idx, 100)
         else:
             self.signal_no_match_found.emit("Find name error")
             print("Find name error")

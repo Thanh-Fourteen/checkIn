@@ -48,10 +48,10 @@ class ThreadClass(QtCore.QThread):
                 idx, acc = self.detect.predict_name(self.img_path)
                 if acc >= self.threshold:
                     self.signal_recognized.emit(idx, acc)
-                    self.running = False
                 elif (idx == -1):
                     self.signal_update_text.emit("No faces detected in the camera.")
                 else:
                     self.signal_update_text.emit("No match found.")
+                    print(f"idx: {idx}, acc: {acc}")
                 self.signal_update_button.emit(True) 
                 print(f"Recognize completed with frame {frame_count}")

@@ -4,7 +4,7 @@ import threading
 from PyQt6 import QtCore
 from PyQt6.QtCore import Qt, pyqtSlot, QThreadPool, QRectF
 from PyQt6.QtGui import QImage, QPixmap, QPixmap, QPainter, QPainterPath
-from PyQt6.QtWidgets import QInputDialog, QMainWindow, QMessageBox
+from PyQt6.QtWidgets import QInputDialog, QMainWindow, QMessageBox, QLabel
 from PyQt6.uic import loadUi
 from detection import faceDetection
 from tasks.warmup_task import WarmupTask
@@ -13,7 +13,7 @@ from threads.registration_thread import RegistrationThread
 
 class MainScreen(QMainWindow):
     signal_update_buttons = QtCore.pyqtSignal(bool)
-    def __init__(self, folder, parent=None, skip_frame_first=10, frame_skip=10, threshold=0.5):
+    def __init__(self, folder, parent=None, skip_frame_first=10, frame_skip=20, threshold=0.4):
         super(MainScreen, self).__init__(parent)
         ui_path = os.path.join(folder,"UI", 'main.ui')
         loadUi(ui_path, self)
@@ -37,6 +37,7 @@ class MainScreen(QMainWindow):
         self.warmup_active = False
         self.showing_camera = False 
         self.registering = False 
+        self.predicting = False
 
         self.original_pixmap = self.imgLabel.pixmap()
         
@@ -48,7 +49,6 @@ class MainScreen(QMainWindow):
         self.thread.signal_update_text.connect(self.update_text)
         self.thread.signal_update_button.connect(self.update_button_state)
         self.thread.signal_recognized.connect(self.onRecognized)
-        self.predicting = False
         self.welcome_screen = None
 
     def WarmUp(self):
@@ -76,9 +76,10 @@ class MainScreen(QMainWindow):
 
             self.thread.cap = self.cap
             self.thread.signal_update_text.connect(self.update_text)
+            self.thread.running = True
             self.thread.start()
 
-            while self.cap is not None:
+            while self.cap is not None and self.showing_camera:
                 ret, frame = self.cap.read()
                 frame = cv2.flip(frame, 1)
 
@@ -89,7 +90,7 @@ class MainScreen(QMainWindow):
 
     def breakClicked(self):
         if self.showing_camera:
-            self.TEXT.setText("Don't Click any button!")
+            self.TEXT.setText("Stopping Camera...")
             self.thread.running = False
             self.thread.wait()
 
@@ -198,19 +199,20 @@ class MainScreen(QMainWindow):
     
     def onRecognized(self, name, acc):
         self.predicting = False
-        self.breakClicked() 
+        self.TEXT.setText('Detect done')
+        # self.breakClicked() 
         # self.stacked_widget.setCurrentIndex(1)  
         self.welcome_screen.update_text(name, acc) 
     
     def getInputName(self):
         id, ok = QInputDialog.getText(self, "Input your ID", "Enter ID:")
         if ok and id:
-            reply = QMessageBox.question(self, "Parent Confirmation",
-                                     "Are you a parent?",
-                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-                                     QMessageBox.StandardButton.No)
-            is_parent = (reply == QMessageBox.StandardButton.Yes)
-            self.goToWelcomeScreen(id, is_parent) 
+            # reply = QMessageBox.question(self, "Parent Confirmation",
+            #                          "Are you a parent?",
+            #                          QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            #                          QMessageBox.StandardButton.No)
+            # is_parent = (reply == QMessageBox.StandardButton.Yes)
+            self.goToWelcomeScreen(id, False) 
 
     def goToWelcomeScreen(self, name, is_parent):
         # self.stacked_widget.setCurrentIndex(1)
